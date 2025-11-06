@@ -22,6 +22,7 @@
 ## Description
 
 Deploy [docker](https://docker.io) with proxy support using ansible. (forked from https://galaxy.ansible.com/geerlingguy/docker)
+
 ## Requirements
 
 none
@@ -39,7 +40,6 @@ See [variables](/defaults/main.yml) for more details.
           gather_facts: true
           roles:
             - role: ansible-apps_docker
-
 
 ## License
 

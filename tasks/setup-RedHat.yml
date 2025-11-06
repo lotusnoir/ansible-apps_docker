@@ -6,10 +6,10 @@
       - docker-common
       - docker-engine
     state: absent
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
 
 - name: Add Docker GPG key.
   ansible.builtin.rpm_key:
@@ -53,25 +53,25 @@
       ansible.builtin.package:
         name: runc
         state: absent
-      register: pkg_result
+      register: __pkg_result
       retries: 12
       delay: 10
-      until: pkg_result is success
+      until: __pkg_result is success
 
     - name: Ensure container-selinux is installed.
       ansible.builtin.package:
         name: container-selinux
         state: present
-      register: pkg_result
+      register: __pkg_result
       retries: 12
       delay: 10
-      until: pkg_result is success
+      until: __pkg_result is success
 
     - name: Ensure containerd.io is installed.
       ansible.builtin.package:
         name: containerd.io
         state: present
-      register: pkg_result
+      register: __pkg_result
       retries: 12
       delay: 10
-      until: pkg_result is success
+      until: __pkg_result is success

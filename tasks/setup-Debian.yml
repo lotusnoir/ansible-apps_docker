@@ -5,10 +5,10 @@
       - docker
       - docker-engine
     state: absent
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
 
 - name: Ensure dependencies are installed.
   ansible.builtin.apt:
@@ -16,30 +16,30 @@
       - apt-transport-https
       - ca-certificates
     state: present
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
   when: docker_add_repo | bool
 
 - name: Ensure additional dependencies are installed (on Ubuntu < 20.04 and any other systems).
   ansible.builtin.apt:
     name: gnupg2
     state: present
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
   when: ansible_distribution != 'Ubuntu' or ansible_distribution_version is version('20.04', '<')
 
 - name: Ensure additional dependencies are installed (on Ubuntu >= 20.04).
   ansible.builtin.apt:
     name: gnupg
     state: present
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=')
 
 - name: Add Docker apt key.
@@ -57,10 +57,10 @@
   ansible.builtin.package:
     name: curl
     state: present
-  register: pkg_result
+  register: __pkg_result
   retries: 12
   delay: 10
-  until: pkg_result is success
+  until: __pkg_result is success
   when: add_repository_key is failed and docker_add_repo | bool
 
 - name: Add Docker apt key (alternative for older systems without SNI).
