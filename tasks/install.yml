@@ -104,7 +104,7 @@
 - name: Ensure handlers are notified now to avoid firewall conflicts.
   ansible.builtin.meta: flush_handlers
 
-- name: Docker compase install
+- name: Docker compose install
   ansible.builtin.include_tasks: docker-compose.yml
   when: docker_install_compose | bool
 
@@ -126,3 +126,11 @@
 - name: Create users
   ansible.builtin.include_tasks: docker-users.yml
   when: at_least_one_user_to_modify is defined
+
+- name: Configure containerd
+  ansible.builtin.template:
+    src: containerd_config.toml.j2
+    dest: /etc/containerd/config.toml
+    mode: '0644'
+  when: docker_containerd_settings | length > 0
+  notify: Restart containerd
