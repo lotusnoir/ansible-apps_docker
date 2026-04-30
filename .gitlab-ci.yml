@@ -79,13 +79,6 @@ molecule_redhat9:
   image: lotusnoir/molecule_play:2.18.11
   script:
     - MOLECULE_DISTRIB=redhat9 molecule test
-molecule_rocky10:
-  <<: *molecule_job_template
-  image: lotusnoir/molecule_play:2.18.11
-  tags:
-    - avx2
-  script:
-    - MOLECULE_DISTRIB=rocky10 molecule test
 molecule_rocky8:
   <<: *molecule_job_template
   image: lotusnoir/molecule_play:2.15.13
@@ -138,8 +131,6 @@ changelog:
     - job: molecule_redhat8
       optional: true
     - job: molecule_redhat9
-      optional: true
-    - job: molecule_rocky10
       optional: true
     - job: molecule_rocky8
       optional: true

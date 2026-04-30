@@ -1,11 +1,17 @@
 ---
 - name: Ensure old versions of Docker are not installed.
   ansible.builtin.package:
-    name:
-      - docker
-      - docker-common
-      - docker-engine
+    name: "{{ docker_obsolete_packages }}"
     state: absent
+  register: __pkg_result
+  retries: 12
+  delay: 10
+  until: __pkg_result is success
+
+- name: Ensure additional dependencies are installed.
+  ansible.builtin.package:
+    name: gnupg2
+    state: present
   register: __pkg_result
   retries: 12
   delay: 10
@@ -15,7 +21,26 @@
   ansible.builtin.rpm_key:
     key: "{{ docker_yum_gpg_key }}"
     state: present
-  when: docker_add_repo | bool
+  when:
+    - docker_add_repo | bool
+      #    - not (ansible_facts.os_family == "RedHat" and ansible_facts.distribution_major_version == "10")
+      #
+      # - name: Check if key already exists
+      #  ansible.builtin.stat:
+      #    path: /etc/pki/rpm-gpg/docker.gpg
+      #  register: docker_keyring
+      #  when:
+      #    - docker_add_repo | bool
+      #    - ansible_facts.os_family == "RedHat" and ansible_facts.distribution_major_version == "10"
+      #
+      # - name: Convert Docker GPG key to keyring
+      #  ansible.builtin.shell: |
+      #    gpg --batch --yes --dearmor /tmp/docker.gpg > /etc/pki/rpm-gpg/docker.gpg
+      #  changed_when: false
+      #  when:
+      #    - docker_add_repo | bool
+      #    - not docker_keyring.stat.exists
+      #    - ansible_facts.os_family == "RedHat" and ansible_facts.distribution_major_version == "10"
 
 - name: Add Docker repository.
   ansible.builtin.get_url:
@@ -45,7 +70,7 @@
   when: docker_add_repo | bool
 
 - name: Configure containerd on RHEL 8.
-  when: ansible_distribution_major_version | int == 8
+  when: ansible_facts.distribution_major_version | int == 8
   block:
     - name: Ensure runc is not installed.
       ansible.builtin.package:
